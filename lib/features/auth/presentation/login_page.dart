@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../notes/presentation/home_page.dart';
+import '../../../main_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
                   hintText: 'password',
                   hintStyle: TextStyle(color: Colors.grey),
                   suffix: IconButton(
-                    padding: EdgeInsets.zero,
+                    constraints: BoxConstraints(),
                     icon: Icon(
                       _isObscured ? Icons.visibility_off : Icons.visibility,
                     ),
@@ -71,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
                           context,
                           MaterialPageRoute<void>(
                             builder: (context) =>
-                                MyHomePage(title: 'Home Page'),
+                                MainPage(title: 'Home Page'),
                           ),
                         );
                       },
