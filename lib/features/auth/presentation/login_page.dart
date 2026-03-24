@@ -70,8 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute<void>(
-                            builder: (context) =>
-                                MainPage(title: 'Home Page'),
+                            builder: (context) => MainPage(title: 'Home Page'),
                           ),
                         );
                       },

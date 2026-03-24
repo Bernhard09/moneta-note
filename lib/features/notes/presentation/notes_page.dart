@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:moneta_note/core/theme/app_colors.dart';
 import 'package:moneta_note/features/notes/presentation/note_detail_page.dart';
 import 'package:moneta_note/features/notes/provider/notes_provider.dart';
 
@@ -8,36 +9,44 @@ class NotesPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notes = ref.watch(noteNotifierProvider);
+    final notes = ref.watch(notesNotifierProvider);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 18.0),
       child: Column(
         children: [
           SizedBox(height: 20),
           Expanded(
-            child: ListView.builder(
-              itemCount: notes.length,
-              itemBuilder: (context, index) => InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const NoteDetailPage(),
+            child: (notes.isEmpty)
+                ? Center(
+                    child: Text(
+                      'There are nothing here, add one!',
+                      style: TextStyle(fontWeight: FontWeight.w100),
                     ),
-                  );
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.blueGrey,
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  )
+                : ListView.builder(
+                    itemCount: notes.length,
+                    itemBuilder: (context, index) => InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                NoteDetailPage(note: notes[index]),
+                          ),
+                        );
+                      },
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0,
+                            vertical: 32.0,
+                          ),
+                          child: Row(children: [Text(notes[index].title)]),
+                        ),
+                      ),
+                    ),
                   ),
-                  margin: EdgeInsets.symmetric(vertical: 8.0),
-                  height: 60,
-                  child: Column(children: [Text(notes[index].title)]),
-                ),
-              ),
-            ),
           ),
         ],
       ),
