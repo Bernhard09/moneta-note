@@ -1,35 +1,71 @@
-import 'package:flutter/scheduler.dart';
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:moneta_note/services/shared_prefence_service.dart';
 import '../data/note.dart';
 
-final notesNotifierProvider = NotifierProvider<NotesProvider, List<Note>>(
+final notesNotifierProvider = AsyncNotifierProvider<NotesProvider, List<Note>>(
   () => NotesProvider(),
 );
 
-class NotesProvider extends Notifier<List<Note>> {
+class NotesProvider extends AsyncNotifier<List<Note>> {
   // initial state
   @override
   List<Note> build() {
+    String? notesJsonString = SharedPrefencesService.getString('notes_key');
+    if (notesJsonString != null) {
+      final List<dynamic> decodedList = jsonDecode(notesJsonString);
+
+      return decodedList.map((item) => Note.fromMap(item)).toList();
+    }
     return [];
   }
 
   // method
-  void addNote() {
+  void addNote() async {
     final newNote = Note(
       id: DateTime.now().millisecondsSinceEpoch,
       title: 'Unknown Notes',
       content: '',
     );
-    state = [...state, newNote];
+    state = AsyncData([...(state.value ?? []), newNote]);
+
+    final List<Map<String, dynamic>> notesAsMap = state.value!
+        .map((note) => note.toMap())
+        .toList();
+
+    final String jsonString = jsonEncode(notesAsMap);
+
+    await SharedPrefencesService.setString('notes_key', jsonString);
   }
 
-  void updateNote(int id, String title, String content) {
-    state = [
-      for (final note in state)
-        if (note.id == id)
-          note.copyWith(id: id, title: title, content: content)
-        else
-          note,
-    ];
+  void updateNote(int id, String title, String content) async {
+    if (state.value != null) {
+      final updatedList = state.value!
+          .map(
+            (note) => note.id == id
+                ? note.copyWith(title: title, content: content)
+                : note,
+          )
+          .toList();
+      state = AsyncData(updatedList);
+      // state = AsyncData([
+      //   for (final note in state.value!)
+      //     if (note.id == id)
+      //       note.copyWith(id: id, title: title, content: content)
+      //     else
+      //       note,
+      // ]);
+    } else {
+      state = AsyncData([]);
+    }
+
+    final List<Map<String, dynamic>> notesAsMap = state.value!
+        .map((note) => note.toMap())
+        .toList();
+
+    final String jsonString = jsonEncode(notesAsMap);
+
+    await SharedPrefencesService.setString('notes_key', jsonString);
   }
 }

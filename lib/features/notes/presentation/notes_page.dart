@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:moneta_note/core/theme/app_colors.dart';
 import 'package:moneta_note/features/notes/presentation/note_detail_page.dart';
 import 'package:moneta_note/features/notes/provider/notes_provider.dart';
 
@@ -9,7 +8,7 @@ class NotesPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notes = ref.watch(notesNotifierProvider);
+    final notes = ref.watch(notesNotifierProvider).value ?? [];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0),
@@ -42,7 +41,27 @@ class NotesPage extends ConsumerWidget {
                             horizontal: 12.0,
                             vertical: 32.0,
                           ),
-                          child: Row(children: [Text(notes[index].title)]),
+                          child: Row(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    notes[index].title,
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                  Text(
+                                    notes[index].description,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.clip,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w100,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

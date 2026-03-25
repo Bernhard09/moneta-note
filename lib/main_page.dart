@@ -26,7 +26,6 @@ class MainPage extends ConsumerStatefulWidget {
 }
 
 class _MainPageState extends ConsumerState<MainPage> {
-  int _counter = 0;
   int _selectedIndex = 0;
 
   final Map<String, Widget> _children = {
@@ -79,6 +78,9 @@ class _MainPageState extends ConsumerState<MainPage> {
           ? FloatingActionButton(
               onPressed: () {
                 ref.read(notesNotifierProvider.notifier).addNote();
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('New note added!')));
               },
               tooltip: 'Add',
               child: const Icon(Icons.add),
