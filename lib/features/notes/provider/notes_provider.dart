@@ -10,9 +10,12 @@ final notesNotifierProvider = AsyncNotifierProvider<NotesProvider, List<Note>>(
 
 class NotesProvider extends AsyncNotifier<List<Note>> {
   // initial state
+
+  final _key = 'notes_key';
+
   @override
   List<Note> build() {
-    String? notesJsonString = SharedPrefencesService.getString('notes_key');
+    String? notesJsonString = SharedPrefencesService.getString(_key);
     if (notesJsonString != null) {
       final List<dynamic> decodedList = jsonDecode(notesJsonString);
 
@@ -36,7 +39,7 @@ class NotesProvider extends AsyncNotifier<List<Note>> {
 
     final String jsonString = jsonEncode(notesAsMap);
 
-    await SharedPrefencesService.setString('notes_key', jsonString);
+    await SharedPrefencesService.setString(_key, jsonString);
   }
 
   void updateNote(int id, String title, String content) async {
@@ -66,6 +69,25 @@ class NotesProvider extends AsyncNotifier<List<Note>> {
 
     final String jsonString = jsonEncode(notesAsMap);
 
-    await SharedPrefencesService.setString('notes_key', jsonString);
+    await SharedPrefencesService.setString(_key, jsonString);
+  }
+
+  void deleteNote(Note note) async {
+    if (state.value != null) {
+      List<Note> updatedList = state.value!;
+      updatedList.remove(note);
+
+      state = AsyncData(updatedList);
+    } else {
+      state = AsyncData([]);
+    }
+
+    final List<Map<String, dynamic>> notesAsMap = state.value!
+        .map((note) => note.toMap())
+        .toList();
+
+    final String jsonString = jsonEncode(notesAsMap);
+
+    await SharedPrefencesService.setString(_key, jsonString);
   }
 }

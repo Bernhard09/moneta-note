@@ -42,6 +42,7 @@ class NotesPage extends ConsumerWidget {
                             vertical: 32.0,
                           ),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,6 +60,58 @@ class NotesPage extends ConsumerWidget {
                                     ),
                                   ),
                                 ],
+                              ),
+                              Center(
+                                child: IconButton(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text('Delete a note'),
+                                        content: Text(
+                                          'Are sure to delete "${notes[index].title}?"',
+                                        ),
+                                        actions: [
+                                          // Cancel the deleting process
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context, 'Cancel');
+                                            },
+                                            child: const Text(
+                                              'Cancel',
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ),
+                                          // Delete a note
+                                          TextButton(
+                                            onPressed: () {
+                                              ref
+                                                  .read(
+                                                    notesNotifierProvider
+                                                        .notifier,
+                                                  )
+                                                  .deleteNote(notes[index]);
+                                              ref.invalidate(
+                                                notesNotifierProvider,
+                                              );
+                                              Navigator.pop(context, 'Delete');
+                                            },
+                                            child: Text(
+                                              'Delete',
+                                              style: TextStyle(
+                                                color: Colors.blueGrey,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+
+                                  icon: Icon(Icons.delete, color: Colors.red),
+                                ),
                               ),
                             ],
                           ),
